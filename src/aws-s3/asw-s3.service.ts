@@ -15,6 +15,8 @@ export class AswS3Service {
     });
   }
 
+
+  
   async downloadImage(filePath: string) {
     try {
       if (!filePath) return;
@@ -28,6 +30,7 @@ export class AswS3Service {
     }
   }
 
+
   async uploadImage(filePath, buffer) {
     try {
       const config = {
@@ -35,12 +38,27 @@ export class AswS3Service {
         Bucket: this.bucketName,
         Body: buffer,
       };
-
       await this.serviceStorage.putObject(config).promise();
       const url = await this.downloadImage(filePath);
       return url;
     } catch (e) {
       throw new BadRequestException('Could not upload file');
+    }
+  }
+
+
+  async deleteImg(filePath) {
+    try {
+      if (!filePath) return;
+      const config = {
+        Bucket: this.bucketName,
+        Key: filePath,
+      };
+      console.log(filePath, 'filePath from awsS3 deleteImg');
+      await this.serviceStorage.deleteObject(config).promise();
+      return 'deleted successfully';
+    } catch (error) {
+      console.log(error);
     }
   }
 }

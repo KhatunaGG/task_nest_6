@@ -1,6 +1,7 @@
 import {
   Body,
   Controller,
+  Delete,
   Get,
   Param,
   Patch,
@@ -16,7 +17,6 @@ import { SignInDto } from './dto/sign-in.dto';
 import { AuthGuard } from './auth.guard';
 import { UpdateUserDto } from 'src/users/dto/update-user.dto';
 import { FileInterceptor } from '@nestjs/platform-express';
-
 
 @Controller('auth')
 export class AuthController {
@@ -44,25 +44,32 @@ export class AuthController {
     return this.authService.getCurrentUser(req);
   }
 
-
-
   @Get('users/:id')
   findById(@Param() params) {
     const { id } = params;
     return this.authService.findById(id);
   }
 
-
-
   @Patch('current-user')
   @UseGuards(AuthGuard)
   @UseInterceptors(FileInterceptor('file'))
   updateCurrentUser(
-    @Req() req, 
-    @Body() updateUserDto: UpdateUserDto, 
-    @UploadedFile() file: Express.Multer.File
+    @Req() req,
+    @Body() updateUserDto: UpdateUserDto,
+    @UploadedFile() file: Express.Multer.File,
   ) {
     return this.authService.updateCurrentUser(req.userId, updateUserDto, file);
   }
 
+
+
+  @Delete('delete-image')
+  @UseGuards(AuthGuard)
+  deleteImage(@Req() req, @Body('path') path) {
+    console.log(path, 'path from controller')
+
+
+
+    return this.authService.deleteImage(req.userId, path);
+  }
 }
