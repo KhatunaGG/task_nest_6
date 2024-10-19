@@ -16,7 +16,7 @@ export class AswS3Service {
   }
 
 
-  
+
   async downloadImage(filePath: string) {
     try {
       if (!filePath) return;
@@ -54,7 +54,6 @@ export class AswS3Service {
         Bucket: this.bucketName,
         Key: filePath,
       };
-      console.log(filePath, 'filePath from awsS3 deleteImg');
       await this.serviceStorage.deleteObject(config).promise();
       return 'deleted successfully';
     } catch (error) {

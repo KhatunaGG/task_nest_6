@@ -22,32 +22,25 @@ export class UsersService {
     private awsS3Service: AswS3Service,
   ) {}
 
-  
   findAll() {
     return this.userModel.find();
   }
-
 
   create(createUserDto: CreateUserDto) {
     return this.userModel.create(createUserDto);
   }
 
-
   getById(id) {
     return this.userModel.findById(id);
   }
-
 
   findOne(query) {
     return this.userModel.findOne(query);
   }
 
-
   findByEmail(query) {
     return this.userModel.findOne(query).select('+password');
   }
-
-
 
   async addExpenses(user, newExpense) {
     try {
@@ -64,8 +57,6 @@ export class UsersService {
       console.log(error);
     }
   }
-
-
 
   async update(
     id,
@@ -97,16 +88,18 @@ export class UsersService {
     }
   }
 
-
-
   async remove(id, path) {
     try {
       const user = await this.userModel.findById(id);
       if (!user) {
         throw new NotFoundException('User not found');
       }
+
       if (user.userImageUrl) {
-        const imageToDelete = await this.awsS3Service.deleteImg(path);
+        const urlParts = user.userImageUrl.split('?');
+        const pathSplitParts = urlParts[0].split('/');
+        const path = pathSplitParts[pathSplitParts.length - 1];
+        const imageToDelete = await this.awsS3Service.deleteImg(`task9/${path}`);
       }
       user.userImageUrl = null;
       const updatedUser = await this.userModel.findByIdAndUpdate(id, user, {

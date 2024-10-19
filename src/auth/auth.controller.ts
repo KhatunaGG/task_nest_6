@@ -1,4 +1,5 @@
 import {
+  BadRequestException,
   Body,
   Controller,
   Delete,
@@ -58,6 +59,7 @@ export class AuthController {
     @Body() updateUserDto: UpdateUserDto,
     @UploadedFile() file: Express.Multer.File,
   ) {
+    if(file.size > 50000 ) throw new BadRequestException('Unsupported file size')
     return this.authService.updateCurrentUser(req.userId, updateUserDto, file);
   }
 
@@ -66,10 +68,6 @@ export class AuthController {
   @Delete('delete-image')
   @UseGuards(AuthGuard)
   deleteImage(@Req() req, @Body('path') path) {
-    console.log(path, 'path from controller')
-
-
-
     return this.authService.deleteImage(req.userId, path);
   }
 }
